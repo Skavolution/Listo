@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{Accion}} {{titulo}}</h1>
+<div mat-dialog-content>
+      
+<div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='clientes'">
+         <app-form-cliente></app-form-cliente>
+        </div>
+<div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='restaurante'">
+          <app-form-restaurante></app-form-restaurante>
+</div> 
+<div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='carta'">
+          <app-form-carta></app-form-carta>
+</div> 
+  
+        
+        
+</div>
