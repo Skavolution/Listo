@@ -86,7 +86,7 @@ dataSource:MatTableDataSource<any>;
   }
 
   openDialogEdit(element:Empleados){
-    this.modalservice.titulo="Empleados"
+    this.modalservice.titulo="empleados"
     this.modalservice.accion.next("Editar"),
     this.modalservice.empleados= element
     this.dialog.open(ModalTemplateComponent, {

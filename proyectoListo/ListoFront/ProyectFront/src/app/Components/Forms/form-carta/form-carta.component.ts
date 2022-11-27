@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Carta } from 'src/app/Models/Carta';
+import { ApiService } from 'src/app/Services/api.service';
+import { ModalService } from 'src/app/Services/modal.service';
 
 @Component({
   selector: 'app-form-carta',
@@ -8,81 +12,69 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class FormCartaComponent {
   addressForm = this.fb.group({
-    nombre: [null, Validators.required],
-    descripcion: [null, Validators.required],
-    precio: [null, Validators.required],
-    imagen: null,
-    restaurante: [null, Validators.required],
-    estado: [null, Validators.required],
+    nombre: ["", Validators.required],
+    descripcion: ["", Validators.required],
+    precio: ["", Validators.required],
+    imagen: "",
+    estado: ["", Validators.required],
   });
 
   hasUnitNumber = false;
+  titulo="";
+constructor(private fb: FormBuilder, public service:ApiService,public dialog:MatDialog, public modalservice:ModalService ){}
 
-  states = [
-    {name: 'Alabama', abbreviation: 'AL'},
-    {name: 'Alaska', abbreviation: 'AK'},
-    {name: 'American Samoa', abbreviation: 'AS'},
-    {name: 'Arizona', abbreviation: 'AZ'},
-    {name: 'Arkansas', abbreviation: 'AR'},
-    {name: 'California', abbreviation: 'CA'},
-    {name: 'Colorado', abbreviation: 'CO'},
-    {name: 'Connecticut', abbreviation: 'CT'},
-    {name: 'Delaware', abbreviation: 'DE'},
-    {name: 'District Of Columbia', abbreviation: 'DC'},
-    {name: 'Federated States Of Micronesia', abbreviation: 'FM'},
-    {name: 'Florida', abbreviation: 'FL'},
-    {name: 'Georgia', abbreviation: 'GA'},
-    {name: 'Guam', abbreviation: 'GU'},
-    {name: 'Hawaii', abbreviation: 'HI'},
-    {name: 'Idaho', abbreviation: 'ID'},
-    {name: 'Illinois', abbreviation: 'IL'},
-    {name: 'Indiana', abbreviation: 'IN'},
-    {name: 'Iowa', abbreviation: 'IA'},
-    {name: 'Kansas', abbreviation: 'KS'},
-    {name: 'Kentucky', abbreviation: 'KY'},
-    {name: 'Louisiana', abbreviation: 'LA'},
-    {name: 'Maine', abbreviation: 'ME'},
-    {name: 'Marshall Islands', abbreviation: 'MH'},
-    {name: 'Maryland', abbreviation: 'MD'},
-    {name: 'Massachusetts', abbreviation: 'MA'},
-    {name: 'Michigan', abbreviation: 'MI'},
-    {name: 'Minnesota', abbreviation: 'MN'},
-    {name: 'Mississippi', abbreviation: 'MS'},
-    {name: 'Missouri', abbreviation: 'MO'},
-    {name: 'Montana', abbreviation: 'MT'},
-    {name: 'Nebraska', abbreviation: 'NE'},
-    {name: 'Nevada', abbreviation: 'NV'},
-    {name: 'New Hampshire', abbreviation: 'NH'},
-    {name: 'New Jersey', abbreviation: 'NJ'},
-    {name: 'New Mexico', abbreviation: 'NM'},
-    {name: 'New York', abbreviation: 'NY'},
-    {name: 'North Carolina', abbreviation: 'NC'},
-    {name: 'North Dakota', abbreviation: 'ND'},
-    {name: 'Northern Mariana Islands', abbreviation: 'MP'},
-    {name: 'Ohio', abbreviation: 'OH'},
-    {name: 'Oklahoma', abbreviation: 'OK'},
-    {name: 'Oregon', abbreviation: 'OR'},
-    {name: 'Palau', abbreviation: 'PW'},
-    {name: 'Pennsylvania', abbreviation: 'PA'},
-    {name: 'Puerto Rico', abbreviation: 'PR'},
-    {name: 'Rhode Island', abbreviation: 'RI'},
-    {name: 'South Carolina', abbreviation: 'SC'},
-    {name: 'South Dakota', abbreviation: 'SD'},
-    {name: 'Tennessee', abbreviation: 'TN'},
-    {name: 'Texas', abbreviation: 'TX'},
-    {name: 'Utah', abbreviation: 'UT'},
-    {name: 'Vermont', abbreviation: 'VT'},
-    {name: 'Virgin Islands', abbreviation: 'VI'},
-    {name: 'Virginia', abbreviation: 'VA'},
-    {name: 'Washington', abbreviation: 'WA'},
-    {name: 'West Virginia', abbreviation: 'WV'},
-    {name: 'Wisconsin', abbreviation: 'WI'},
-    {name: 'Wyoming', abbreviation: 'WY'}
-  ];
+ngOnInit(): void{ 
 
-  constructor(private fb: FormBuilder) {}
+  this.modalservice.accion.subscribe((res)=>{
+    this.titulo=res;
+    if(res=='Editar'){
+      this.addressForm.controls['nombre'].setValue(this.modalservice.carta.nomPlato)
+      this.addressForm.controls['descripcion'].setValue(this.modalservice.carta.desPlato)
+      this.addressForm.controls['precio'].setValue(this.modalservice.carta.precio)
+      this.addressForm.controls['imagen'].setValue(this.modalservice.carta.imagen)
+      this.addressForm.controls['restaurante'].setValue(this.modalservice.carta.idRest)
+      this.addressForm.controls['estado'].setValue(this.modalservice.carta.estadoPlato)
+      
+    }
+  })
+}
 
-  onSubmit(): void {
-    alert('Thanks!');
+async onSubmit() {
+  if (this.modalservice.accion.value =="Crear"){
+    console.log(this.modalservice.accion.value);
+    console.log(this.addressForm.valid);
+    console.log(this.addressForm);
+    if(this.addressForm.valid){
+      console.log(this.modalservice.accion.value);
+      const carta:Carta={
+        nomPlato:this.addressForm.controls['nombre'].value,
+        desPlato:this.addressForm.controls['descripcion'].value,
+        precio:this.addressForm.controls['precio'].value,
+        imagen:this.addressForm.controls['imagen'].value,
+        idRest:"0",
+        estadoPlato:this.addressForm.controls['estado'].value,
+
+      }
+      console.log(carta);
+      this.service.Post('Menus', carta);
+      //window.location.reload();
+    }
+  }else{
+    if(this.addressForm.valid){
+      const carta:Carta={
+        idPlato:this.modalservice.carta.idPlato,
+        nomPlato:this.addressForm.controls['nombre'].value,
+        desPlato:this.addressForm.controls['descripcion'].value,
+        precio:this.addressForm.controls['precio'].value,
+        imagen:this.addressForm.controls['imagen'].value,
+        idRest:this.addressForm.controls['restaurante'].value,
+        estadoPlato:this.addressForm.controls['estado'].value,
+        
+      }
+
+    const respuesta = await this.service.Put("Menus",carta,this.modalservice.carta.idPlato);  //nomCli es colocar el id
+    window.location.reload();
   }
+}
+}
 }

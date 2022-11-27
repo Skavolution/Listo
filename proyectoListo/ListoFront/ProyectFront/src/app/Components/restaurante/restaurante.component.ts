@@ -92,7 +92,7 @@ export class RestauranteComponent implements OnInit {
   openDialogEdit(element:any){
     this.modalservice.titulo="restaurante"
     this.modalservice.accion.next("Editar"),
-    this.modalservice.clientes= element
+    this.modalservice.restaurante= element
     this.dialog.open(ModalTemplateComponent, {
       width: 'auto',
       height: 'auto'

@@ -10,7 +10,12 @@
 <div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='carta'">
           <app-form-carta></app-form-carta>
 </div> 
-  
+<div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='empleados'">
+          <app-form-empleados></app-form-empleados>
+</div> 
+<div *ngIf="(Accion=='Crear' || Accion=='Editar') && titulo=='mesas'">
+          <app-form-mesas></app-form-mesas>
+</div> 
         
         
 </div>

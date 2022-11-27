@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ListoBackend.Models;
+using ListoBackend.ModelsView;
 
 namespace ListoBackend.Controllers
 {
@@ -25,6 +26,31 @@ namespace ListoBackend.Controllers
         public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
         {
             return await _context.Clientes.ToListAsync();
+        }
+
+        // GET: api/ClientesLogin
+        [HttpGet("{email}/{password}")]
+        public async Task<ActionResult<IEnumerable<ClientesLoginMV>>> GetClientesLogin(string email, string password)
+        {
+            if (_context.Clientes ==null)
+            {
+                return  null;
+            }
+            var query = (from us in _context.Clientes
+                         where us.EmailCli == email && us.ContraseñaCli == password
+                         select new ClientesLoginMV
+                         {
+                             CedulaCli = us.CedulaCli,
+                             NomCli = us.NomCli,
+                             CelCli = us.CelCli,
+                             TelfijCli = us.TelfijCli,
+                             EmailCli =us.EmailCli,
+                             DirCli = us.DirCli,
+                             Ciudad = us.Ciudad,
+                             ContraseñaCli = us.ContraseñaCli,
+                         }).ToListAsync();
+
+            return await query;
         }
 
         // GET: api/Clientes/5
